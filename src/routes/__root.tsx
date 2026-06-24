@@ -77,7 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Mentis — Mental Math Trainer" },
+      { title: "Mind Math — Mental Math Trainer" },
       { name: "description", content: "Short, focused mental math drills for adults. Local-only, no signup." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

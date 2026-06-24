@@ -7,7 +7,7 @@ import { getLastResult, type SessionResult } from "@/lib/progress";
 export const Route = createFileRoute("/results")({
   head: () => ({
     meta: [
-      { title: "Results — Mentis" },
+      { title: "Results — Mind Math" },
       { name: "description", content: "Drill session summary: accuracy, speed, and missed questions." },
     ],
   }),

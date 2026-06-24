@@ -20,7 +20,7 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/practice/session")({
   head: () => ({
     meta: [
-      { title: "Drill — Mentis" },
+      { title: "Drill — Mind Math" },
       { name: "description", content: "Active mental math drill session." },
     ],
   }),
