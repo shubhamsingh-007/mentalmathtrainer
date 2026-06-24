@@ -278,6 +278,59 @@ function Session() {
               Submit
             </button>
           </form>
+
+          {/* Race-the-bot pacer */}
+          <div className="mt-8 w-full max-w-xs space-y-3" aria-label="Race the bot">
+            <div>
+              <div className="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                <span className="font-display font-semibold uppercase tracking-[0.14em] text-foreground">
+                  You
+                </span>
+                <span className="numeric">
+                  {idx} / {length}
+                </span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className={`h-full bg-primary transition-all duration-300 ${
+                    lead > 0 ? "shadow-[0_0_8px_var(--color-primary)]" : ""
+                  }`}
+                  style={{ width: `${youPct}%` }}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                <span className="font-display font-semibold uppercase tracking-[0.14em]">
+                  Bot
+                </span>
+                <span className="numeric">
+                  {botIdx} / {length}
+                </span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full bg-muted-foreground/50 transition-all duration-100 ease-linear"
+                  style={{ width: `${botPct}%` }}
+                />
+              </div>
+            </div>
+            <p
+              className={`text-center text-[11px] font-medium ${
+                lead > 0
+                  ? "text-primary"
+                  : lead < 0
+                    ? "text-muted-foreground"
+                    : "text-muted-foreground"
+              }`}
+            >
+              {lead > 0
+                ? `Ahead by ${lead}`
+                : lead < 0
+                  ? `Behind by ${-lead}`
+                  : "Tied"}
+            </p>
+          </div>
         </div>
       </main>
     </div>
