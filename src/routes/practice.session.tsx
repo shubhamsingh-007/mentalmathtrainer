@@ -151,6 +151,12 @@ function Session() {
 
   const progressPct = useMemo(() => (idx / length) * 100, [idx, length]);
 
+  const botIdxRaw = (now - startRef.current) / botMs;
+  const botIdx = Math.min(length, Math.max(0, Math.floor(botIdxRaw)));
+  const botPct = Math.min(100, (botIdxRaw / length) * 100);
+  const youPct = (idx / length) * 100;
+  const lead = idx - botIdx;
+
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader />
