@@ -55,15 +55,34 @@ function Results() {
         </p>
 
         {r.botMs && r.botFinishedAt ? (() => {
-          const diffMs = r.botFinishedAt - r.totalMs; // >0 you finished first
-          const youWon = diffMs > 0;
-          const absSec = Math.abs(diffMs) / 1000;
-          const m = Math.floor(absSec / 60);
-          const s = Math.floor(absSec % 60);
-          const time = m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${absSec.toFixed(1)}s`;
-          // If user ended early, also report question gap
+          // How many questions the user actually attempted (correct + missed)
+          const userAttempted = r.correct + r.missed.length;
+          const completedAll = userAttempted >= r.total;
+          // Bot's question count at the moment the user stopped
           const botIdxAtEnd = Math.min(r.total, Math.floor(r.totalMs / r.botMs));
-          const qGap = r.total - botIdxAtEnd; // how far ahead of bot you were when you finished
+          const youWon = completedAll && r.totalMs < r.botFinishedAt;
+
+          function fmt(ms: number) {
+            const sec = ms / 1000;
+            if (sec < 60) return `${sec.toFixed(1)}s`;
+            const m = Math.floor(sec / 60);
+            const s = Math.round(sec - m * 60);
+            return `${m}m ${String(s).padStart(2, "0")}s`;
+          }
+
+          let label: string;
+          if (youWon) {
+            label = `🏁 Beat the bot by ${fmt(r.botFinishedAt - r.totalMs)}`;
+          } else if (!completedAll) {
+            const gap = botIdxAtEnd - userAttempted;
+            label =
+              gap > 0
+                ? `Bot won — ${gap} question${gap === 1 ? "" : "s"} ahead when you stopped`
+                : `Ended early at ${userAttempted}/${r.total}`;
+          } else {
+            label = `Bot won by ${fmt(r.totalMs - r.botFinishedAt)}`;
+          }
+
           return (
             <div
               className={`mt-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold ${
@@ -72,11 +91,7 @@ function Results() {
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              {youWon
-                ? `🏁 Beat the bot by ${time}`
-                : qGap > 0
-                  ? `Bot won — you stopped ${qGap} ahead on count`
-                  : `Bot won by ${Math.abs(qGap)} question${Math.abs(qGap) === 1 ? "" : "s"}`}
+              {label}
             </div>
           );
         })() : null}
