@@ -5,9 +5,14 @@ import { AppHeader } from "@/components/AppHeader";
 import {
   type Difficulty,
   type Operation,
+  type Pattern,
   type Question,
-  generateQuestion,
 } from "@/lib/math";
+import {
+  chooseNextQuestion,
+  createAdaptiveSession,
+  recordResult,
+} from "@/lib/adaptive";
 import { recordSession, setLastResult, type SessionResult } from "@/lib/progress";
 
 const searchSchema = z.object({
