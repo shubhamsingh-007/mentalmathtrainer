@@ -9,6 +9,10 @@ export interface SessionResult {
   fastestMs: number;
   missed: { prompt: string; answer: number; given: number | null }[];
   finishedAt: number;
+  /** ms-per-question pace used by the bot during this session */
+  botMs?: number;
+  /** ms (from session start) when the bot completed all questions */
+  botFinishedAt?: number;
 }
 
 interface ProgressState {

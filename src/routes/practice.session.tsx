@@ -29,6 +29,7 @@ export const Route = createFileRoute("/practice/session")({
 });
 
 const PER_Q_MS = 10_000;
+const BOT_MS: Record<Difficulty, number> = { easy: 6000, medium: 4000, hard: 3000 };
 
 function Session() {
   const { op, diff, length, timer } = Route.useSearch();
@@ -57,21 +58,27 @@ function Session() {
     return () => clearInterval(i);
   }, []);
 
+  const botMs = BOT_MS[diff as Difficulty];
+
   const finish = useCallback(() => {
+    const totalMs = Date.now() - startRef.current;
+    const botFinishedAt = botMs * length;
     const result: SessionResult = {
       op: op as Operation,
       difficulty: diff as Difficulty,
       total: length,
       correct: score,
-      totalMs: Date.now() - startRef.current,
+      totalMs,
       fastestMs: Number.isFinite(fastestRef.current) ? fastestRef.current : 0,
       missed: missedRef.current,
       finishedAt: Date.now(),
+      botMs,
+      botFinishedAt,
     };
     recordSession(result);
     setLastResult(result);
     navigate({ to: "/results" });
-  }, [op, diff, length, score, navigate]);
+  }, [op, diff, length, score, navigate, botMs]);
 
   const advance = useCallback(
     (wasCorrect: boolean, given: number | null) => {
@@ -143,6 +150,12 @@ function Session() {
   const perQLeft = timer ? Math.max(0, PER_Q_MS - (now - qStartRef.current)) : 0;
 
   const progressPct = useMemo(() => (idx / length) * 100, [idx, length]);
+
+  const botIdxRaw = (now - startRef.current) / botMs;
+  const botIdx = Math.min(length, Math.max(0, Math.floor(botIdxRaw)));
+  const botPct = Math.min(100, (botIdxRaw / length) * 100);
+  const youPct = (idx / length) * 100;
+  const lead = idx - botIdx;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -265,6 +278,59 @@ function Session() {
               Submit
             </button>
           </form>
+
+          {/* Race-the-bot pacer */}
+          <div className="mt-8 w-full max-w-xs space-y-3" aria-label="Race the bot">
+            <div>
+              <div className="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                <span className="font-display font-semibold uppercase tracking-[0.14em] text-foreground">
+                  You
+                </span>
+                <span className="numeric">
+                  {idx} / {length}
+                </span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className={`h-full bg-primary transition-all duration-300 ${
+                    lead > 0 ? "shadow-[0_0_8px_var(--color-primary)]" : ""
+                  }`}
+                  style={{ width: `${youPct}%` }}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                <span className="font-display font-semibold uppercase tracking-[0.14em]">
+                  Bot
+                </span>
+                <span className="numeric">
+                  {botIdx} / {length}
+                </span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full bg-muted-foreground/50 transition-all duration-100 ease-linear"
+                  style={{ width: `${botPct}%` }}
+                />
+              </div>
+            </div>
+            <p
+              className={`text-center text-[11px] font-medium ${
+                lead > 0
+                  ? "text-primary"
+                  : lead < 0
+                    ? "text-muted-foreground"
+                    : "text-muted-foreground"
+              }`}
+            >
+              {lead > 0
+                ? `Ahead by ${lead}`
+                : lead < 0
+                  ? `Behind by ${-lead}`
+                  : "Tied"}
+            </p>
+          </div>
         </div>
       </main>
     </div>
