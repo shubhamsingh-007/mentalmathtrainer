@@ -94,6 +94,8 @@ function Session() {
   const advance = useCallback(
     (wasCorrect: boolean, given: number | null) => {
       const elapsed = Date.now() - qStartRef.current;
+      const curPattern = questionRef.current.pattern;
+      recordResult(curPattern, wasCorrect);
       if (wasCorrect) {
         scoreRef.current += 1;
         setScore((s) => s + 1);
@@ -105,6 +107,8 @@ function Session() {
         if (elapsed < fastestRef.current) fastestRef.current = elapsed;
       } else {
         setCombo(0);
+        recentMissesRef.current.push(curPattern);
+        if (recentMissesRef.current.length > 6) recentMissesRef.current.shift();
         missedRef.current.push({
           prompt: questionRef.current.prompt,
           answer: questionRef.current.answer,
@@ -121,11 +125,16 @@ function Session() {
             finish();
             return;
           }
-          questionRef.current = generateQuestion(op as Operation, diff as Difficulty);
+          questionRef.current = chooseNextQuestion(
+            op as Operation,
+            diff as Difficulty,
+            adaptiveRef.current,
+          );
           setIdx(next);
           setInput("");
           setFeedback(null);
           setRevealAnswer(null);
+          setShowHint(false);
           qStartRef.current = Date.now();
           force((n) => n + 1);
           inputRef.current?.focus();
