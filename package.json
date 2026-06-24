@@ -85,5 +85,11 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^8.0.16"
+  },
+  "overrides": {
+    "undici": "^7.16.0"
+  },
+  "resolutions": {
+    "undici": "^7.16.0"
   }
 }
