@@ -134,23 +134,10 @@ function Session() {
     if (left <= 0) advance(false, null);
   }, [timer, now, feedback, advance]);
 
-  // Keyboard
+  // Autofocus the input on mount and whenever the question changes
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        submit();
-      } else if (e.key === "Backspace") {
-        setInput((s) => s.slice(0, -1));
-      } else if (e.key === "-" && input === "") {
-        setInput("-");
-      } else if (/^[0-9]$/.test(e.key)) {
-        setInput((s) => (s.length < 8 ? s + e.key : s));
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [submit, input]);
+    inputRef.current?.focus();
+  }, [idx]);
 
   const elapsedTotal = Math.floor((now - startRef.current) / 1000);
   const perQLeft = timer ? Math.max(0, PER_Q_MS - (now - qStartRef.current)) : 0;
