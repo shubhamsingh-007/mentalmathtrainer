@@ -29,6 +29,7 @@ export const Route = createFileRoute("/practice/session")({
 });
 
 const PER_Q_MS = 10_000;
+const BOT_MS: Record<Difficulty, number> = { easy: 6000, medium: 4000, hard: 3000 };
 
 function Session() {
   const { op, diff, length, timer } = Route.useSearch();
