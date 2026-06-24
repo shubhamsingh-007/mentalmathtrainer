@@ -58,21 +58,27 @@ function Session() {
     return () => clearInterval(i);
   }, []);
 
+  const botMs = BOT_MS[diff as Difficulty];
+
   const finish = useCallback(() => {
+    const totalMs = Date.now() - startRef.current;
+    const botFinishedAt = botMs * length;
     const result: SessionResult = {
       op: op as Operation,
       difficulty: diff as Difficulty,
       total: length,
       correct: score,
-      totalMs: Date.now() - startRef.current,
+      totalMs,
       fastestMs: Number.isFinite(fastestRef.current) ? fastestRef.current : 0,
       missed: missedRef.current,
       finishedAt: Date.now(),
+      botMs,
+      botFinishedAt,
     };
     recordSession(result);
     setLastResult(result);
     navigate({ to: "/results" });
-  }, [op, diff, length, score, navigate]);
+  }, [op, diff, length, score, navigate, botMs]);
 
   const advance = useCallback(
     (wasCorrect: boolean, given: number | null) => {
