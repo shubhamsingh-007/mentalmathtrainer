@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { DIFFICULTIES, OPERATIONS, type Difficulty, type Operation } from "@/lib/math";
 
-export const Route = createFileRoute("/practice")({
+export const Route = createFileRoute("/practice/")({
   head: () => ({
     meta: [
       { title: "Practice — Mentis" },
