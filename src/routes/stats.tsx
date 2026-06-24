@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
+import { AccuracyTrend, AvgTimePerOp } from "@/components/ProgressCharts";
 import { OPERATIONS, type Operation } from "@/lib/math";
 import { loadProgress, resetProgress } from "@/lib/progress";
 
@@ -42,6 +43,29 @@ function Stats() {
           <Tile label="Questions answered" value={`${p.totals.questions}`} />
           <Tile label="Lifetime accuracy" value={`${acc}%`} />
         </div>
+
+        <section className="mt-12 grid gap-6 md:grid-cols-2">
+          <div className="rounded-xl border border-border bg-card p-5">
+            <h2 className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Accuracy trend
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Last {Math.min(p.history.length, 20)} sessions, oldest to newest.
+            </p>
+            <div className="mt-4">
+              <AccuracyTrend history={p.history} />
+            </div>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-5">
+            <h2 className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Avg time per question
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">Lower is faster. Across all sessions.</p>
+            <div className="mt-4">
+              <AvgTimePerOp history={p.history} />
+            </div>
+          </div>
+        </section>
 
         <section className="mt-12">
           <h2 className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
