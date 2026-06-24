@@ -78,9 +78,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Mind Math — Mental Math Trainer" },
-      { name: "description", content: "Short, focused mental math drills for adults. Local-only, no signup." },
+      { name: "description", content: "Short, focused mental math drills for all. No-Fuss Local-only, no signup." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:title", content: "Mind Math — Mental Math Trainer" },
+      { name: "twitter:title", content: "Mind Math — Mental Math Trainer" },
+      { property: "og:description", content: "Short, focused mental math drills for all. No-Fuss Local-only, no signup." },
+      { name: "twitter:description", content: "Short, focused mental math drills for all. No-Fuss Local-only, no signup." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/61c3fc73-55ca-402e-b840-94bb95b1928b" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/61c3fc73-55ca-402e-b840-94bb95b1928b" },
     ],
     links: [
       {
