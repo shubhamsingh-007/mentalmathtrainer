@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
+import { AccuracyTrend, AvgTimePerOp } from "@/components/ProgressCharts";
 import { OPERATIONS, type Operation } from "@/lib/math";
 import { loadProgress, resetProgress } from "@/lib/progress";
 
