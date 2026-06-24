@@ -167,6 +167,18 @@ function Session() {
     inputRef.current?.focus();
   }, [idx]);
 
+  // Hint trigger: stall (5s with empty input) OR pattern missed in the last 2 attempts
+  const hintText = questionRef.current.hint;
+  useEffect(() => {
+    if (feedback || showHint || !hintText) return;
+    const recent = recentMissesRef.current.slice(-2);
+    const repeatedMiss = recent.filter((p) => p === questionRef.current.pattern).length >= 1
+      && recent.length >= 1
+      && recent[recent.length - 1] === questionRef.current.pattern;
+    const stalled = input.trim() === "" && now - qStartRef.current >= 5000;
+    if (repeatedMiss || stalled) setShowHint(true);
+  }, [feedback, showHint, hintText, input, now, idx]);
+
   const elapsedTotal = Math.floor((now - startRef.current) / 1000);
   const perQLeft = timer ? Math.max(0, PER_Q_MS - (now - qStartRef.current)) : 0;
 
