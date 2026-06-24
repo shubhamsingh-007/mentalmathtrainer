@@ -4,13 +4,13 @@ import { AppHeader } from "@/components/AppHeader";
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
-      { title: "Techniques — Mentis" },
+      { title: "Techniques — Mind Math" },
       {
         name: "description",
         content:
           "Mental math techniques: left-to-right addition, round-and-adjust, the ×11 trick, percentage swap, squaring numbers ending in 5, and more.",
       },
-      { property: "og:title", content: "Mental Math Techniques — Mentis" },
+      { property: "og:title", content: "Mental Math Techniques — Mind Math" },
       {
         property: "og:description",
         content: "Practical shortcuts for fast mental arithmetic.",

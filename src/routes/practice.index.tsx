@@ -6,9 +6,9 @@ import { DIFFICULTIES, OPERATIONS, type Difficulty, type Operation } from "@/lib
 export const Route = createFileRoute("/practice/")({
   head: () => ({
     meta: [
-      { title: "Practice — Mentis" },
+      { title: "Practice — Mind Math" },
       { name: "description", content: "Pick an operation, difficulty, and session length, then start the drill." },
-      { property: "og:title", content: "Practice — Mentis" },
+      { property: "og:title", content: "Practice — Mind Math" },
       { property: "og:description", content: "Configure a focused mental math drill." },
     ],
   }),

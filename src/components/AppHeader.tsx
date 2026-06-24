@@ -8,7 +8,7 @@ export function AppHeader() {
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground numeric text-sm font-bold">
             ∑
           </span>
-          Mentis
+          Mind Math
         </Link>
         <nav className="flex items-center gap-1 text-sm">
           {[

@@ -7,13 +7,13 @@ import { loadProgress } from "@/lib/progress";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Mentis — Mental Math Trainer" },
+      { title: "Mind Math — Mental Math Trainer" },
       {
         name: "description",
         content:
           "Sharpen mental arithmetic with short, focused drills. Add, subtract, multiply, divide, percentages, squares — all in your browser, no account.",
       },
-      { property: "og:title", content: "Mentis — Mental Math Trainer" },
+      { property: "og:title", content: "Mind Math — Mental Math Trainer" },
       {
         property: "og:description",
         content: "Quick daily mental math drills for adults. Local-only progress, no signup.",
@@ -109,7 +109,7 @@ function Index() {
         </section>
       </main>
       <footer className="border-t border-border/60 py-8 text-center text-xs text-muted-foreground">
-        Mentis · Practice in the browser. Nothing leaves your device.
+        Mind Math · Practice in the browser. Nothing leaves your device.
       </footer>
     </div>
   );

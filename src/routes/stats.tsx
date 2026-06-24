@@ -7,9 +7,9 @@ import { loadProgress, resetProgress } from "@/lib/progress";
 export const Route = createFileRoute("/stats")({
   head: () => ({
     meta: [
-      { title: "Stats — Mentis" },
+      { title: "Stats — Mind Math" },
       { name: "description", content: "Streaks, totals, accuracy, and personal bests for your mental math practice." },
-      { property: "og:title", content: "Stats — Mentis" },
+      { property: "og:title", content: "Stats — Mind Math" },
       { property: "og:description", content: "Track your mental math progress." },
     ],
   }),
