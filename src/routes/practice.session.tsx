@@ -158,6 +158,18 @@ function Session() {
               <span className="numeric">
                 Score <span className="font-semibold text-foreground">{score}</span>
               </span>
+              <span
+                className={`numeric transition-colors ${
+                  combo >= 2 ? "text-primary font-semibold" : ""
+                }`}
+              >
+                Combo{" "}
+                <span
+                  className={`font-semibold ${combo >= 2 ? "text-primary" : "text-foreground"}`}
+                >
+                  ×{combo}
+                </span>
+              </span>
               <span className="numeric">
                 {Math.floor(elapsedTotal / 60)}:{String(elapsedTotal % 60).padStart(2, "0")}
               </span>
@@ -187,6 +199,15 @@ function Session() {
 
         {/* Question */}
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-10">
+          {combo >= 3 ? (
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+              <span>🔥 Combo ×{combo}</span>
+              {bestCombo > combo ? (
+                <span className="text-primary/60">best ×{bestCombo}</span>
+              ) : null}
+            </div>
+          ) : null}
+
           <p
             className={`numeric font-display text-6xl font-semibold tracking-tight md:text-7xl transition-colors ${
               feedback === "correct"
@@ -199,18 +220,38 @@ function Session() {
             {questionRef.current.prompt}
           </p>
 
-          <div className="mt-10 w-full max-w-xs">
-            <div
-              className={`numeric flex h-20 items-center justify-center rounded-2xl border-2 bg-card text-4xl font-semibold tracking-wide transition-all ${
+          <form
+            className="mt-10 w-full max-w-xs"
+            onSubmit={(e) => {
+              e.preventDefault();
+              submit();
+            }}
+          >
+            <input
+              ref={inputRef}
+              type="text"
+              inputMode="numeric"
+              pattern="-?[0-9]*"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
+              enterKeyHint="go"
+              value={input}
+              disabled={feedback !== null}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === "" || /^-?\d{0,8}$/.test(v)) setInput(v);
+              }}
+              placeholder="—"
+              aria-label="Your answer"
+              className={`numeric block h-20 w-full rounded-2xl border-2 bg-card text-center text-4xl font-semibold tracking-wide tabular-nums outline-none transition-all placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/30 ${
                 feedback === "correct"
                   ? "border-[oklch(0.6_0.18_155)] bg-[oklch(0.95_0.05_155)]"
                   : feedback === "wrong"
                     ? "border-destructive bg-[oklch(0.97_0.03_27)]"
                     : "border-border"
               }`}
-            >
-              {input || <span className="text-muted-foreground/40">—</span>}
-            </div>
+            />
             {revealAnswer != null ? (
               <p className="numeric mt-2 text-center text-sm text-muted-foreground">
                 Answer: <span className="font-semibold text-foreground">{revealAnswer}</span>
@@ -220,30 +261,10 @@ function Session() {
                 Type the answer · Enter to submit
               </p>
             )}
-          </div>
-
-          {/* Keypad (mobile) */}
-          <div className="mt-8 grid w-full max-w-xs grid-cols-3 gap-2 md:hidden">
-            {["1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "0", "⌫"].map((k) => (
-              <button
-                key={k}
-                onClick={() => {
-                  if (k === "⌫") setInput((s) => s.slice(0, -1));
-                  else if (k === "-") setInput((s) => (s === "" ? "-" : s));
-                  else setInput((s) => (s.length < 8 ? s + k : s));
-                }}
-                className="numeric h-14 rounded-xl border border-border bg-card text-xl font-semibold transition-colors hover:bg-accent active:bg-accent"
-              >
-                {k}
-              </button>
-            ))}
-            <button
-              onClick={submit}
-              className="col-span-3 h-12 rounded-xl bg-primary font-display font-semibold text-primary-foreground"
-            >
-              Enter
+            <button type="submit" className="sr-only" aria-hidden>
+              Submit
             </button>
-          </div>
+          </form>
         </div>
       </main>
     </div>
