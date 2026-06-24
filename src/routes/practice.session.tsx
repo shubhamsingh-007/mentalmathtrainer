@@ -48,6 +48,7 @@ function Session() {
   const startRef = useRef<number>(Date.now());
   const qStartRef = useRef<number>(Date.now());
   const fastestRef = useRef<number>(Number.POSITIVE_INFINITY);
+  const scoreRef = useRef(0);
   const missedRef = useRef<SessionResult["missed"]>([]);
   const questionRef = useRef<Question>(generateQuestion(op as Operation, diff as Difficulty));
   const [, force] = useState(0);
@@ -67,7 +68,7 @@ function Session() {
       op: op as Operation,
       difficulty: diff as Difficulty,
       total: length,
-      correct: score,
+      correct: scoreRef.current,
       totalMs,
       fastestMs: Number.isFinite(fastestRef.current) ? fastestRef.current : 0,
       missed: missedRef.current,
@@ -78,12 +79,13 @@ function Session() {
     recordSession(result);
     setLastResult(result);
     navigate({ to: "/results" });
-  }, [op, diff, length, score, navigate, botMs]);
+  }, [op, diff, length, navigate, botMs]);
 
   const advance = useCallback(
     (wasCorrect: boolean, given: number | null) => {
       const elapsed = Date.now() - qStartRef.current;
       if (wasCorrect) {
+        scoreRef.current += 1;
         setScore((s) => s + 1);
         setCombo((c) => {
           const next = c + 1;
