@@ -94,8 +94,6 @@ function Results() {
               {label}
             </div>
           );
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          void userFinished;
         })() : null}
 
         <div className="mt-8 grid gap-3 sm:grid-cols-3">
