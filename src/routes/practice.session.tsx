@@ -36,11 +36,14 @@ function Session() {
 
   const [idx, setIdx] = useState(0);
   const [score, setScore] = useState(0);
+  const [combo, setCombo] = useState(0);
+  const [bestCombo, setBestCombo] = useState(0);
   const [input, setInput] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [revealAnswer, setRevealAnswer] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
+  const inputRef = useRef<HTMLInputElement>(null);
   const startRef = useRef<number>(Date.now());
   const qStartRef = useRef<number>(Date.now());
   const fastestRef = useRef<number>(Number.POSITIVE_INFINITY);
