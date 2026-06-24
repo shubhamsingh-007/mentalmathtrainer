@@ -55,7 +55,12 @@ function Session() {
   const fastestRef = useRef<number>(Number.POSITIVE_INFINITY);
   const scoreRef = useRef(0);
   const missedRef = useRef<SessionResult["missed"]>([]);
-  const questionRef = useRef<Question>(generateQuestion(op as Operation, diff as Difficulty));
+  const adaptiveRef = useRef(createAdaptiveSession());
+  const recentMissesRef = useRef<Pattern[]>([]);
+  const questionRef = useRef<Question>(
+    chooseNextQuestion(op as Operation, diff as Difficulty, adaptiveRef.current),
+  );
+  const [showHint, setShowHint] = useState(false);
   const [, force] = useState(0);
 
   // Re-render tick for timer
