@@ -5,9 +5,14 @@ import { AppHeader } from "@/components/AppHeader";
 import {
   type Difficulty,
   type Operation,
+  type Pattern,
   type Question,
-  generateQuestion,
 } from "@/lib/math";
+import {
+  chooseNextQuestion,
+  createAdaptiveSession,
+  recordResult,
+} from "@/lib/adaptive";
 import { recordSession, setLastResult, type SessionResult } from "@/lib/progress";
 
 const searchSchema = z.object({
@@ -50,7 +55,12 @@ function Session() {
   const fastestRef = useRef<number>(Number.POSITIVE_INFINITY);
   const scoreRef = useRef(0);
   const missedRef = useRef<SessionResult["missed"]>([]);
-  const questionRef = useRef<Question>(generateQuestion(op as Operation, diff as Difficulty));
+  const adaptiveRef = useRef(createAdaptiveSession());
+  const recentMissesRef = useRef<Pattern[]>([]);
+  const questionRef = useRef<Question>(
+    chooseNextQuestion(op as Operation, diff as Difficulty, adaptiveRef.current),
+  );
+  const [showHint, setShowHint] = useState(false);
   const [, force] = useState(0);
 
   // Re-render tick for timer
@@ -84,6 +94,8 @@ function Session() {
   const advance = useCallback(
     (wasCorrect: boolean, given: number | null) => {
       const elapsed = Date.now() - qStartRef.current;
+      const curPattern = questionRef.current.pattern;
+      recordResult(curPattern, wasCorrect);
       if (wasCorrect) {
         scoreRef.current += 1;
         setScore((s) => s + 1);
@@ -95,6 +107,8 @@ function Session() {
         if (elapsed < fastestRef.current) fastestRef.current = elapsed;
       } else {
         setCombo(0);
+        recentMissesRef.current.push(curPattern);
+        if (recentMissesRef.current.length > 6) recentMissesRef.current.shift();
         missedRef.current.push({
           prompt: questionRef.current.prompt,
           answer: questionRef.current.answer,
@@ -111,11 +125,16 @@ function Session() {
             finish();
             return;
           }
-          questionRef.current = generateQuestion(op as Operation, diff as Difficulty);
+          questionRef.current = chooseNextQuestion(
+            op as Operation,
+            diff as Difficulty,
+            adaptiveRef.current,
+          );
           setIdx(next);
           setInput("");
           setFeedback(null);
           setRevealAnswer(null);
+          setShowHint(false);
           qStartRef.current = Date.now();
           force((n) => n + 1);
           inputRef.current?.focus();
@@ -147,6 +166,18 @@ function Session() {
   useEffect(() => {
     inputRef.current?.focus();
   }, [idx]);
+
+  // Hint trigger: stall (5s with empty input) OR pattern missed in the last 2 attempts
+  const hintText = questionRef.current.hint;
+  useEffect(() => {
+    if (feedback || showHint || !hintText) return;
+    const recent = recentMissesRef.current.slice(-2);
+    const repeatedMiss = recent.filter((p) => p === questionRef.current.pattern).length >= 1
+      && recent.length >= 1
+      && recent[recent.length - 1] === questionRef.current.pattern;
+    const stalled = input.trim() === "" && now - qStartRef.current >= 5000;
+    if (repeatedMiss || stalled) setShowHint(true);
+  }, [feedback, showHint, hintText, input, now, idx]);
 
   const elapsedTotal = Math.floor((now - startRef.current) / 1000);
   const perQLeft = timer ? Math.max(0, PER_Q_MS - (now - qStartRef.current)) : 0;
@@ -276,6 +307,18 @@ function Session() {
                 Type the answer · Enter to submit
               </p>
             )}
+            {showHint && hintText && !feedback ? (
+              <div
+                role="note"
+                aria-live="polite"
+                className="mt-4 flex items-start gap-2 rounded-xl border border-border bg-muted/60 px-3 py-2 text-left text-xs text-muted-foreground animate-in fade-in duration-200"
+              >
+                <span className="mt-px font-display text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
+                  Tip
+                </span>
+                <span className="leading-relaxed">{hintText}</span>
+              </div>
+            ) : null}
             <button type="submit" className="sr-only" aria-hidden>
               Submit
             </button>

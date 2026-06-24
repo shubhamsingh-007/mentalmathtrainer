@@ -65,6 +65,7 @@ function saveProgress(state: ProgressState) {
 export function resetProgress() {
   localStorage.removeItem(KEY);
   localStorage.removeItem(RESULT_KEY);
+  localStorage.removeItem("mm.adaptive.v1");
 }
 
 export function recordSession(result: SessionResult) {
