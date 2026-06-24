@@ -55,9 +55,6 @@ function Results() {
         </p>
 
         {r.botMs && r.botFinishedAt ? (() => {
-          const userFinished = r.correct + r.missed.length >= r.total
-            ? true
-            : false;
           // How many questions the user actually attempted (correct + missed)
           const userAttempted = r.correct + r.missed.length;
           const completedAll = userAttempted >= r.total;
