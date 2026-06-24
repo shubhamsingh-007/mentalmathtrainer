@@ -307,6 +307,18 @@ function Session() {
                 Type the answer · Enter to submit
               </p>
             )}
+            {showHint && hintText && !feedback ? (
+              <div
+                role="note"
+                aria-live="polite"
+                className="mt-4 flex items-start gap-2 rounded-xl border border-border bg-muted/60 px-3 py-2 text-left text-xs text-muted-foreground animate-in fade-in duration-200"
+              >
+                <span className="mt-px font-display text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
+                  Tip
+                </span>
+                <span className="leading-relaxed">{hintText}</span>
+              </div>
+            ) : null}
             <button type="submit" className="sr-only" aria-hidden>
               Submit
             </button>
