@@ -41,8 +41,8 @@ function Index() {
       <main className="mx-auto max-w-3xl px-6">
         {/* Hero */}
         <section className="pt-20 pb-16 text-center">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+          <p className="mb-5 inline-flex items-center gap-2.5 rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground sm:text-base">
+            <span className="h-2 w-2 rounded-full bg-primary" />
             Local-only · No account
           </p>
           <h1 className="text-balance text-5xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
