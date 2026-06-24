@@ -54,6 +54,33 @@ function Results() {
           {opLabel} · {r.difficulty}
         </p>
 
+        {r.botMs && r.botFinishedAt ? (() => {
+          const diffMs = r.botFinishedAt - r.totalMs; // >0 you finished first
+          const youWon = diffMs > 0;
+          const absSec = Math.abs(diffMs) / 1000;
+          const m = Math.floor(absSec / 60);
+          const s = Math.floor(absSec % 60);
+          const time = m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${absSec.toFixed(1)}s`;
+          // If user ended early, also report question gap
+          const botIdxAtEnd = Math.min(r.total, Math.floor(r.totalMs / r.botMs));
+          const qGap = r.total - botIdxAtEnd; // how far ahead of bot you were when you finished
+          return (
+            <div
+              className={`mt-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold ${
+                youWon
+                  ? "bg-primary/10 text-primary ring-1 ring-primary/30"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              {youWon
+                ? `🏁 Beat the bot by ${time}`
+                : qGap > 0
+                  ? `Bot won — you stopped ${qGap} ahead on count`
+                  : `Bot won by ${Math.abs(qGap)} question${Math.abs(qGap) === 1 ? "" : "s"}`}
+            </div>
+          );
+        })() : null}
+
         <div className="mt-8 grid gap-3 sm:grid-cols-3">
           <Tile label="Accuracy" value={`${accuracy}%`} />
           <Tile label="Avg time" value={`${(avgMs / 1000).toFixed(1)}s`} />
