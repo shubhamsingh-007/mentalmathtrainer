@@ -78,8 +78,14 @@ function Session() {
       const elapsed = Date.now() - qStartRef.current;
       if (wasCorrect) {
         setScore((s) => s + 1);
+        setCombo((c) => {
+          const next = c + 1;
+          setBestCombo((b) => (next > b ? next : b));
+          return next;
+        });
         if (elapsed < fastestRef.current) fastestRef.current = elapsed;
       } else {
+        setCombo(0);
         missedRef.current.push({
           prompt: questionRef.current.prompt,
           answer: questionRef.current.answer,
@@ -103,6 +109,7 @@ function Session() {
           setRevealAnswer(null);
           qStartRef.current = Date.now();
           force((n) => n + 1);
+          inputRef.current?.focus();
         },
         wasCorrect ? 350 : 900,
       );
