@@ -1,46 +1,29 @@
-# Add a "Race the Bot" pacer to the drill
+## Bug
 
-Add a competitive progress bar below the answer field so users can race a steady-paced bot through the session.
+On the results page the user sees `Ended early at 9/10` even though they answered all 10 questions (8 correct + 2 missed = 10 attempted, matching the 80% accuracy shown).
 
-## What the user sees
+Root cause is a stale-closure bug in `src/routes/practice.session.tsx`:
 
-Under the answer input on `/practice/session`:
+- `finish()` is wrapped in `useCallback` with `score` in its deps.
+- `advance(true, …)` calls `setScore(s => s + 1)` and then schedules `finish()` via `setTimeout(..., 350)`.
+- That `setTimeout` was scheduled with the version of `advance`/`finish` captured at the time of the click, BEFORE the last `setScore` flushed. When the timer fires on the final question, `finish()` reads the previous render's `score` — exactly one less than reality.
+- The results page then computes `userAttempted = r.correct + r.missed.length` = `7 + 2 = 9`, treats it as `< r.total`, and renders `Ended early at 9/10`.
 
-```text
-You  ████████████░░░░░░░░░░░  12 / 25
-Bot  ██████████░░░░░░░░░░░░░  10 / 25
-```
+Net effect: every successful final answer is undercounted by 1 in `correct` (and therefore in the "completed all" check on the results screen).
 
-- Two stacked thin bars, each labeled with current question count.
-- **You** bar uses `--primary`; **Bot** bar uses a muted foreground tone.
-- When your bar passes the bot's, it briefly pulses (200ms primary glow) — no layout shift.
-- A tiny status line under the bars: "Ahead by 2" (primary) / "Behind by 1" (muted) / "Tied".
+## Fix
 
-On the results page, add one line to the summary: **"Beat the bot by 0:12"** or **"Bot won by 4 questions"**.
+In `src/routes/practice.session.tsx`:
 
-## Bot behavior
+1. Add `const scoreRef = useRef(0)` next to the other refs.
+2. In `advance(true, …)`, increment `scoreRef.current` synchronously right next to the `setScore` call so the ref stays in lockstep with the displayed score.
+3. In `finish()`, use `scoreRef.current` instead of the `score` state when building `SessionResult.correct`, and drop `score` from the `useCallback` deps so `finish`/`advance` no longer churn on every answer.
+4. Leave `score` state in place for the HUD render — only the value persisted to the result changes.
 
-- **Speed**: fixed per difficulty — Easy 6000ms, Medium 4000ms, Hard 3000ms per question.
-- **Accuracy**: always correct (pure speed pacer).
-- **Start**: bot starts its first "answer" the moment the session begins (same `startRef`).
-- The bot advances one question every `botMs`, capped at `length`. Pause logic: bot also halts during the brief feedback delay between your questions? No — bot is independent of your input; it just ticks on wall-clock time from session start. This keeps it a real benchmark.
+No changes to `src/routes/results.tsx` or `src/lib/progress.ts`. The existing "Beat the bot / Bot won / Ended early" branching is correct once `r.correct` is accurate.
 
-## Implementation (technical)
+## Verification
 
-All changes in `src/routes/practice.session.tsx`:
-
-1. Add `const BOT_MS: Record<Difficulty, number> = { easy: 6000, medium: 4000, hard: 3000 }`.
-2. Derive bot progress from existing `now` tick (already updates every 100ms):
-   `const botIdx = Math.min(length, Math.floor((now - startRef.current) / BOT_MS[diff]))`.
-3. Render two bars under the `<form>` inside the existing input column (max-w-xs):
-   - Reuse the HUD's bar styling (`h-1 rounded-full bg-muted` + inner fill).
-   - Label row above each bar: `You 12 / 25` and `Bot 10 / 25` in `text-xs text-muted-foreground numeric`.
-   - Status line below in `text-[11px]`.
-4. Pass `botIdx` (snapshot at finish time) into `SessionResult` via a new optional field `botFinishedAt?: number` (ms from start when bot hit `length`) so the results page can compute the gap. Update `src/lib/progress.ts` `SessionResult` type and `src/routes/results.tsx` to render the one-line outcome.
-5. No new config controls on `/practice` — bot speed is implicit from difficulty. (We can promote it to a user-selectable "Pacer: Chill / Sharp / Ruthless" later if desired.)
-
-## Out of scope
-
-- Adaptive bot speed, selectable bot personalities, bot accuracy < 100%.
-- Per-question "beat the bot" ticks or sound effects.
-- Storing bot win/loss history in stats (can add later if it proves motivating).
+- Run a 10-question drill, answer all 10 (mix correct + wrong).
+- Confirm results page shows `correct + missed.length === total` and renders the bot outcome (`Beat the bot by …` or `Bot won by …`) instead of `Ended early at 9/10`.
+- Hitting "End" mid-drill should still show `Ended early at N/10` with the correct partial count.
