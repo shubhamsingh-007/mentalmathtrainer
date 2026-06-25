@@ -81,22 +81,16 @@ function weightFor(stat: PatternStat | undefined): number {
 interface Session {
   lastPattern: Pattern | null;
   repeatCount: number;
+  seenPrompts: Set<string>;
 }
 
 export function createAdaptiveSession(): Session {
-  return { lastPattern: null, repeatCount: 0 };
+  return { lastPattern: null, repeatCount: 0, seenPrompts: new Set() };
 }
 
-export function chooseNextQuestion(
-  op: Operation,
-  diff: Difficulty,
-  session: Session,
-): Question {
+function pickPattern(op: Operation, diff: Difficulty, session: Session): Pattern {
   const eligible = [...ELIGIBLE[op][diff]];
-  if (eligible.length === 0) {
-    // safety fallback — shouldn't happen
-    return generateForPattern("add.nocarry", diff);
-  }
+  if (eligible.length === 0) return "add.nocarry";
   const state = load();
   let pool = eligible;
   if (
@@ -117,10 +111,27 @@ export function chooseNextQuestion(
       break;
     }
   }
+  return chosen;
+}
+
+export function chooseNextQuestion(
+  op: Operation,
+  diff: Difficulty,
+  session: Session,
+): Question {
+  const MAX_ATTEMPTS = 12;
+  let question: Question = generateForPattern(pickPattern(op, diff, session), diff);
+  let chosen: Pattern = question.pattern;
+  for (let i = 0; i < MAX_ATTEMPTS && session.seenPrompts.has(question.prompt); i++) {
+    chosen = pickPattern(op, diff, session);
+    question = generateForPattern(chosen, diff);
+  }
   if (chosen === session.lastPattern) session.repeatCount += 1;
   else {
     session.lastPattern = chosen;
     session.repeatCount = 1;
   }
-  return generateForPattern(chosen, diff);
+  session.seenPrompts.add(question.prompt);
+  return question;
 }
+
