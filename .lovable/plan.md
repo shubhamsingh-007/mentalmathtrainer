@@ -1,29 +1,33 @@
-## Goal
+## Add README.md
 
-Prevent the same exact question (same prompt) from appearing twice within a single drill session.
+Create a `README.md` at the project root to help testers/contributors get the app running quickly.
 
-## Where
+### Sections
 
-- `src/lib/adaptive.ts` — `Session` state and `chooseNextQuestion`.
-- `src/routes/practice.session.tsx` — already creates one `Session` per drill via `createAdaptiveSession()`, so no change to lifetime.
+1. **Mind Math** — one-line intro: local-only mental math trainer for adults.
+2. **Features** — practice modes (add/sub, mul/div, squares/roots/powers, percentages), adaptive drills with spaced repetition, contextual hints, Race the Bot pacer, combo streaks, progress charts, fully local (no account, localStorage).
+3. **Tech stack** — TanStack Start v1, React 19, Vite 7, Tailwind v4, TypeScript, Bun.
+4. **Getting started**
+   - Prerequisites: Bun (or Node 20+)
+   - `bun install`
+   - `bun dev` → opens on `localhost:8080`
+   - `bun run build` / `bun run start` for production preview
+5. **Project structure** — brief map:
+   - `src/routes/` — file-based routes (index, practice, practice.session, results, stats, techniques)
+   - `src/lib/` — `math.ts`, `adaptive.ts`, `hints.ts`, `progress.ts`
+   - `src/components/` — `AppHeader`, `ProgressCharts`
+   - `src/styles.css` — Tailwind v4 + Cloud White palette tokens
+6. **How it works** — short notes on adaptive engine (pattern weighting by accuracy), dedupe within a session, hint triggers (5s stall or repeated miss), bot pacing per difficulty.
+7. **Testing notes for QA** — known surfaces to exercise:
+   - Start a drill from each operation × difficulty
+   - Verify no duplicate prompts in one session
+   - Trigger hint via 5s stall and via a wrong answer
+   - Mobile: keyboard should stay open across questions; sticky HUD visible
+   - Results page: "Beat the bot" wording + time format (`12.3s` / `1m 05s`)
+   - Stats page charts render with ≥1 session in localStorage
+   - Clear data: `localStorage.clear()` in devtools resets progress
+8. **Data & privacy** — everything in `localStorage`; no network calls, no account.
+9. **Deployment** — published via Lovable; GitHub sync is two-way.
 
-## Plan
-
-1. **Track seen prompts on the session**
-   - Add `seenPrompts: Set<string>` to the `Session` object returned by `createAdaptiveSession`.
-
-2. **Retry generation to avoid duplicates**
-   - In `chooseNextQuestion`, after picking a pattern, call `generateForPattern(chosen, diff)` and check whether `question.prompt` is already in `seenPrompts`.
-   - If it is, retry up to **12 times**, re-rolling the pattern each attempt so we don't get stuck on a small pattern (e.g. `pow2` with only a few prompts).
-   - If every attempt still collides (small pattern pool genuinely exhausted), accept the last generated question rather than loop forever.
-
-3. **Record the chosen prompt**
-   - After selecting, add `question.prompt` to `seenPrompts`.
-
-4. **No change to adaptive weighting or persistence**
-   - `seenPrompts` lives only on the in-memory session object; it is not saved to localStorage, so a brand-new drill starts fresh.
-   - Pattern-level stats and the existing `MAX_REPEAT` pattern-streak guard stay as-is.
-
-## Expected result
-
-Within a single drill, no two questions share the exact same prompt string (e.g. you won't see `47 × 9` twice in the same session), while adaptive difficulty targeting remains unchanged.
+### Out of scope
+No code changes, no dependency changes — documentation only.
