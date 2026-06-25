@@ -221,10 +221,11 @@ function Session() {
               </span>
               <button
                 onClick={finish}
-                className="rounded-md border border-border bg-background px-2 py-1 text-xs hover:bg-accent"
+                className="rounded-md border border-destructive/40 bg-destructive/10 px-2 py-1 text-xs font-semibold text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground"
               >
                 End
               </button>
+
             </div>
             <div className="mt-2 h-1 overflow-hidden rounded-full bg-muted">
               <div
