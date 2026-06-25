@@ -7,6 +7,70 @@ import type { Pattern } from "./math";
  */
 export function hintFor(pattern: Pattern, prompt: string, answer: number): string | undefined {
   switch (pattern) {
+    case "add.nocarry": {
+      const m = prompt.match(/^(\d+)\s*\+\s*(\d+)$/);
+      if (!m) return undefined;
+      const a = Number(m[1]);
+      const b = Number(m[2]);
+      return `Stack columns: tens (${Math.floor(a / 10) + Math.floor(b / 10)}_) + ones (${(a % 10) + (b % 10)}).`;
+    }
+    case "sub.nobutton": {
+      const m = prompt.match(/^(\d+)\s*−\s*(\d+)$/);
+      if (!m) return undefined;
+      const a = Number(m[1]);
+      const b = Number(m[2]);
+      return `Count up from ${b} to ${a} — no borrow needed.`;
+    }
+    case "mul.table": {
+      const m = prompt.match(/^(\d+)\s*×\s*(\d+)$/);
+      if (!m) return undefined;
+      const a = Number(m[1]);
+      const b = Number(m[2]);
+      const [big, small] = a >= b ? [a, b] : [b, a];
+      if (small === 5) return `× 5 = half of × 10: ${big} × 10 = ${big * 10}, halve it.`;
+      if (small === 4) return `Double twice: ${big} → ${big * 2} → ${big * 4}.`;
+      if (small === 6) return `× 6 = × 5 + itself: ${big * 5} + ${big}.`;
+      return `Anchor a known fact near ${big}×${small}, then adjust by ${big}.`;
+    }
+    case "div.clean": {
+      const m = prompt.match(/^(\d+)\s*÷\s*(\d+)$/);
+      if (!m) return undefined;
+      const b = Number(m[2]);
+      return `Flip it: what × ${b} = ${answer * b}?`;
+    }
+    case "square.small": {
+      const m = prompt.match(/^(\d+)²$/);
+      if (!m) return undefined;
+      const n = Number(m[1]);
+      const base = n < 10 ? n : Math.round(n / 10) * 10;
+      const d = n - base;
+      if (d === 0) return `Known fact: ${n} × ${n}.`;
+      return `(${base} + ${d})² = ${base}² + 2·${base}·${d} + ${d}².`;
+    }
+    case "cube": {
+      const m = prompt.match(/^(\d+)³$/);
+      if (!m) return undefined;
+      const n = Number(m[1]);
+      return `${n}² = ${n * n}, then × ${n}.`;
+    }
+    case "pow2": {
+      const m = prompt.match(/^2\^(\d+)$/);
+      if (!m) return undefined;
+      const k = Number(m[1]);
+      return `Double ${k} times — every 10 powers is ~1024.`;
+    }
+    case "pct.simple": {
+      const m = prompt.match(/^(\d+)%\s*of\s*(\d+)$/);
+      if (!m) return undefined;
+      const a = Number(m[1]);
+      const b = Number(m[2]);
+      if (a === 10) return `Shift the decimal: ${b / 10}.`;
+      if (a === 50) return `Half of ${b}.`;
+      if (a === 25) return `Quarter of ${b} — halve twice.`;
+      if (a === 5) return `10% (${b / 10}) halved.`;
+      return `${a}% = ${a / 100}; multiply by ${b}.`;
+    }
+
     case "add.crosses10": {
       const m = prompt.match(/^(\d+)\s*\+\s*(\d+)$/);
       if (!m) return undefined;
