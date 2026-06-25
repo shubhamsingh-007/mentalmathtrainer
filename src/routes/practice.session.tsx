@@ -333,8 +333,9 @@ function Session() {
               spellCheck={false}
               enterKeyHint="go"
               value={input}
-              disabled={feedback !== null}
+              readOnly={feedback !== null}
               onChange={(e) => {
+                if (feedback !== null) return;
                 const v = e.target.value;
                 if (v === "" || /^-?\d{0,8}$/.test(v)) setInput(v);
               }}
