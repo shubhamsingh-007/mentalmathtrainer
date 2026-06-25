@@ -139,7 +139,7 @@ function Session() {
           force((n) => n + 1);
           inputRef.current?.focus();
         },
-        wasCorrect ? 120 : 650,
+        wasCorrect ? 120 : 1200,
       );
     },
     [idx, length, op, diff, finish],
