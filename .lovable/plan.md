@@ -1,26 +1,29 @@
+## Goal
+
+Prevent the mobile keyboard from closing and reopening after each submitted answer on both Android and iOS.
+
+## Root cause
+
+The drill currently disables the answer input during the short feedback pause. Mobile browsers dismiss the soft keyboard when a focused input becomes disabled. Tapping the Submit button can also steal focus from the input, which causes the same keyboard flicker.
+
 ## Plan
 
-Edit `src/components/AppHeader.tsx` only — purely responsive CSS, no behavior change.
+1. **Keep the input focusable during feedback**
+   - Change the answer input from `disabled` to `readOnly` while feedback is showing.
+   - Keep the same green/red feedback styling so users still see correct/wrong state.
 
-1. **Shrink header padding on mobile** so logo + nav have more room:
-   - Container: `px-3 sm:px-6` (was `px-6`).
-   - Container: keep `h-14` but allow it to grow on mobile: `min-h-14` so a wrapped second row doesn't clip.
+2. **Stop Submit from stealing focus**
+   - Prevent the Submit button from taking focus on touch/mouse press.
+   - Let the form submit normally, but keep focus on the answer field.
 
-2. **Compact the logo on mobile** so it occupies less of the row:
-   - Logo icon square: `h-7 w-7 sm:h-8 sm:w-8` (was `h-8 w-8`), inner svg `16 → 18`.
-   - Wordmark size: `text-base sm:text-lg` (was `text-lg`).
-   - Gap between icon and wordmark: `gap-2 sm:gap-2.5`.
+3. **Guard against accidental edits during feedback**
+   - Ignore input changes while feedback is visible.
+   - Keep the Submit button disabled during feedback as it is now.
 
-3. **Tighten the nav on mobile**:
-   - Each link: `px-2 py-1.5 text-xs sm:px-3 sm:text-sm` (was `px-3 py-1.5 text-sm`).
-   - Nav gap: `gap-0.5 sm:gap-1`.
+4. **Keep autofocus only as a fallback**
+   - Leave the focus call after question change for desktop/fallback behavior.
+   - The main mobile fix will be that the input never loses focus in the first place.
 
-4. **Allow graceful wrap if it still doesn't fit** (e.g. very narrow 320px screens):
-   - Container: `flex-wrap gap-y-1`. Logo stays on the first row; the nav wraps under it as a second row only when truly needed. Sticky header height grows by one row in that edge case — acceptable, and avoids the overlap.
+## Expected result
 
-5. **No changes** to links, routes, colors, sticky behavior, or desktop appearance (`≥sm` reverts to today's sizing).
-
-## Out of scope
-
-- No hamburger menu, icon swap, or bottom tab bar (user picked shrink + wrap).
-- No changes to any page content or other components.
+After answering a question, the keyboard stays open while the next question appears, instead of collapsing and popping back up.
