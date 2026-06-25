@@ -1,39 +1,26 @@
-## The problem
-
-On mobile, when the input is focused, the on-screen keyboard covers the bottom ~45% of the screen. The YOU / BOT race bars currently live below the question, so they get pushed off-screen the moment the keyboard opens.
-
 ## Plan
 
-Edit `src/routes/practice.session.tsx` only — layout/CSS, no logic change.
+Edit `src/components/AppHeader.tsx` only — purely responsive CSS, no behavior change.
 
-1. **Move the race bars into the top HUD** and make the HUD `sticky top-0 z-20` with a translucent `bg-background/95 backdrop-blur` border. The HUD now contains, top-to-bottom:
-   - Q counter · Score · Combo · timer · End
-   - Overall progress bar (and optional per-question timer)
-   - YOU bar + count
-   - BOT bar + count
-   - "Ahead by N / Behind by N / Tied"
+1. **Shrink header padding on mobile** so logo + nav have more room:
+   - Container: `px-3 sm:px-6` (was `px-6`).
+   - Container: keep `h-14` but allow it to grow on mobile: `min-h-14` so a wrapped second row doesn't clip.
 
-   Because it's sticky, iOS scrolling the focused input into view above the keyboard cannot push the bars off — they re-pin to the top of the visible viewport.
+2. **Compact the logo on mobile** so it occupies less of the row:
+   - Logo icon square: `h-7 w-7 sm:h-8 sm:w-8` (was `h-8 w-8`), inner svg `16 → 18`.
+   - Wordmark size: `text-base sm:text-lg` (was `text-lg`).
+   - Gap between icon and wordmark: `gap-2 sm:gap-2.5`.
 
-2. **Switch the page container to `min-h-[100dvh]`** (with `min-h-screen` fallback) so layout math uses the *visible* viewport once the keyboard appears.
+3. **Tighten the nav on mobile**:
+   - Each link: `px-2 py-1.5 text-xs sm:px-3 sm:text-sm` (was `px-3 py-1.5 text-sm`).
+   - Nav gap: `gap-0.5 sm:gap-1`.
 
-3. **Tighten mobile vertical rhythm** so question + input + Submit + tip fit in the remaining ~55% of viewport:
-   - Question: `text-5xl sm:text-6xl md:text-7xl` (down from `text-6xl` baseline).
-   - Input height: `h-16 sm:h-20`, font `text-3xl sm:text-4xl`.
-   - Inner container padding: `py-4 sm:py-10`.
-   - Form top margin: `mt-6 sm:mt-10`.
-   - Hint chip top margin: `mt-3`.
+4. **Allow graceful wrap if it still doesn't fit** (e.g. very narrow 320px screens):
+   - Container: `flex-wrap gap-y-1`. Logo stays on the first row; the nav wraps under it as a second row only when truly needed. Sticky header height grows by one row in that edge case — acceptable, and avoids the overlap.
 
-4. **Race bars compacted for the HUD**: text size `text-[10px] sm:text-[11px]`, row spacing `space-y-1.5`, bar height stays `h-1.5`. Remove the old race-bar block from below the form.
-
-5. **No change** to scoring, adaptive logic, hint timer, race-bar math, or Submit button behavior. Desktop (`≥sm`) layout reverts to today's spacing via `sm:` breakpoints.
-
-## Technical notes
-
-- `100dvh` (dynamic viewport units) is the standard fix for "iOS keyboard covers my UI." Supported by Safari 15.4+ and all current Android browsers. Tailwind orders the `min-h-screen` fallback first.
-- `position: sticky` is enough; no JS measuring of keyboard height needed.
+5. **No changes** to links, routes, colors, sticky behavior, or desktop appearance (`≥sm` reverts to today's sizing).
 
 ## Out of scope
 
-- No changes to results page, bar update interval, or adaptive engine.
-- No floating "minimize keyboard" toggle — sticky-top covers the need.
+- No hamburger menu, icon swap, or bottom tab bar (user picked shrink + wrap).
+- No changes to any page content or other components.

@@ -3,10 +3,10 @@ import { Link } from "@tanstack/react-router";
 export function AppHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-2.5 font-display text-lg tracking-tight select-none">
-          <span className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-primary via-primary to-sky-400 shadow-lg shadow-primary/20">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <div className="mx-auto flex min-h-14 max-w-5xl flex-wrap items-center justify-between gap-y-1 px-3 sm:px-6">
+        <Link to="/" className="flex items-center gap-2 font-display text-base tracking-tight select-none sm:gap-2.5 sm:text-lg">
+          <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-primary via-primary to-sky-400 shadow-lg shadow-primary/20 sm:h-8 sm:w-8">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="sm:h-[18px] sm:w-[18px]">
               <path
                 d="M18 5H6L11.5 12L6 19H18"
                 stroke="currentColor"
@@ -24,7 +24,7 @@ export function AppHeader() {
             <span className="ml-1 font-extrabold text-primary">Math</span>
           </span>
         </Link>
-        <nav className="flex items-center gap-1 text-sm">
+        <nav className="flex items-center gap-0.5 text-xs sm:gap-1 sm:text-sm">
           {[
             { to: "/practice", label: "Practice" },
             { to: "/stats", label: "Stats" },
@@ -33,7 +33,7 @@ export function AppHeader() {
             <Link
               key={l.to}
               to={l.to}
-              className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              className="rounded-md px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:px-3"
               activeProps={{ className: "text-foreground bg-accent" }}
             >
               {l.label}
@@ -42,5 +42,6 @@ export function AppHeader() {
         </nav>
       </div>
     </header>
+
   );
 }
