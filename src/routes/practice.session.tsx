@@ -191,12 +191,12 @@ function Session() {
   const lead = idx - botIdx;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen min-h-[100dvh] flex flex-col">
       <AppHeader />
       <main className="flex flex-1 flex-col">
-        {/* HUD */}
-        <div className="border-b border-border/60 bg-card/50">
-          <div className="mx-auto max-w-2xl px-6 py-3">
+        {/* HUD — sticky so race bars stay visible above the mobile keyboard */}
+        <div className="sticky top-0 z-20 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+          <div className="mx-auto w-full max-w-2xl px-4 py-2 sm:px-6 sm:py-3">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span className="numeric">
                 Q <span className="font-semibold text-foreground">{idx + 1}</span> / {length}
@@ -240,13 +240,62 @@ function Session() {
                 />
               </div>
             ) : null}
+
+            {/* Race-the-bot pacer (pinned with HUD so it survives the soft keyboard) */}
+            <div className="mt-3 space-y-1.5" aria-label="Race the bot">
+              <div>
+                <div className="mb-0.5 flex items-center justify-between text-[10px] text-muted-foreground sm:text-[11px]">
+                  <span className="font-display font-semibold uppercase tracking-[0.14em] text-foreground">
+                    You
+                  </span>
+                  <span className="numeric">
+                    {idx} / {length}
+                  </span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className={`h-full bg-primary transition-all duration-300 ${
+                      lead > 0 ? "shadow-[0_0_8px_var(--color-primary)]" : ""
+                    }`}
+                    style={{ width: `${youPct}%` }}
+                  />
+                </div>
+              </div>
+              <div>
+                <div className="mb-0.5 flex items-center justify-between text-[10px] text-muted-foreground sm:text-[11px]">
+                  <span className="font-display font-semibold uppercase tracking-[0.14em]">
+                    Bot
+                  </span>
+                  <span className="numeric">
+                    {botIdx} / {length}
+                  </span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full bg-muted-foreground/50 transition-all duration-100 ease-linear"
+                    style={{ width: `${botPct}%` }}
+                  />
+                </div>
+              </div>
+              <p
+                className={`text-center text-[10px] font-medium sm:text-[11px] ${
+                  lead > 0 ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                {lead > 0
+                  ? `Ahead by ${lead}`
+                  : lead < 0
+                    ? `Behind by ${-lead}`
+                    : "Tied"}
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Question */}
-        <div className="flex flex-1 flex-col items-center justify-center px-6 py-10">
+        <div className="flex flex-1 flex-col items-center justify-center px-6 py-4 sm:py-10">
           {combo >= 3 ? (
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary sm:mb-4">
               <span>🔥 Combo ×{combo}</span>
               {bestCombo > combo ? (
                 <span className="text-primary/60">best ×{bestCombo}</span>
@@ -255,7 +304,7 @@ function Session() {
           ) : null}
 
           <p
-            className={`numeric font-display text-6xl font-semibold tracking-tight md:text-7xl transition-colors ${
+            className={`numeric font-display text-5xl font-semibold tracking-tight sm:text-6xl md:text-7xl transition-colors ${
               feedback === "correct"
                 ? "text-[oklch(0.6_0.18_155)]"
                 : feedback === "wrong"
@@ -267,7 +316,7 @@ function Session() {
           </p>
 
           <form
-            className="mt-10 w-full max-w-xs"
+            className="mt-6 w-full max-w-xs sm:mt-10"
             onSubmit={(e) => {
               e.preventDefault();
               submit();
@@ -290,7 +339,7 @@ function Session() {
               }}
               placeholder="—"
               aria-label="Your answer"
-              className={`numeric block h-20 w-full rounded-2xl border-2 bg-card text-center text-4xl font-semibold tracking-wide tabular-nums outline-none transition-all placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/30 ${
+              className={`numeric block h-16 w-full rounded-2xl border-2 bg-card text-center text-3xl font-semibold tracking-wide tabular-nums outline-none transition-all placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/30 sm:h-20 sm:text-4xl ${
                 feedback === "correct"
                   ? "border-[oklch(0.6_0.18_155)] bg-[oklch(0.95_0.05_155)]"
                   : feedback === "wrong"
@@ -311,7 +360,7 @@ function Session() {
               <div
                 role="note"
                 aria-live="polite"
-                className="mt-4 rounded-xl border border-border bg-muted/60 px-3 py-2 text-left text-xs text-muted-foreground animate-in fade-in duration-200"
+                className="mt-3 rounded-xl border border-border bg-muted/60 px-3 py-2 text-left text-xs text-muted-foreground animate-in fade-in duration-200"
               >
                 <span className="mr-2 font-display text-[10px] font-semibold uppercase tracking-[0.16em] text-primary align-middle">
                   Tip
@@ -326,63 +375,10 @@ function Session() {
             >
               Submit
             </button>
-
           </form>
-
-          {/* Race-the-bot pacer */}
-          <div className="mt-8 w-full max-w-xs space-y-3" aria-label="Race the bot">
-            <div>
-              <div className="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
-                <span className="font-display font-semibold uppercase tracking-[0.14em] text-foreground">
-                  You
-                </span>
-                <span className="numeric">
-                  {idx} / {length}
-                </span>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                <div
-                  className={`h-full bg-primary transition-all duration-300 ${
-                    lead > 0 ? "shadow-[0_0_8px_var(--color-primary)]" : ""
-                  }`}
-                  style={{ width: `${youPct}%` }}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
-                <span className="font-display font-semibold uppercase tracking-[0.14em]">
-                  Bot
-                </span>
-                <span className="numeric">
-                  {botIdx} / {length}
-                </span>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full bg-muted-foreground/50 transition-all duration-100 ease-linear"
-                  style={{ width: `${botPct}%` }}
-                />
-              </div>
-            </div>
-            <p
-              className={`text-center text-[11px] font-medium ${
-                lead > 0
-                  ? "text-primary"
-                  : lead < 0
-                    ? "text-muted-foreground"
-                    : "text-muted-foreground"
-              }`}
-            >
-              {lead > 0
-                ? `Ahead by ${lead}`
-                : lead < 0
-                  ? `Behind by ${-lead}`
-                  : "Tied"}
-            </p>
-          </div>
         </div>
       </main>
     </div>
   );
 }
+
