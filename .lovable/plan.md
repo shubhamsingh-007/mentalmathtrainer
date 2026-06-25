@@ -1,29 +1,21 @@
 ## Goal
 
-Prevent the mobile keyboard from closing and reopening after each submitted answer on both Android and iOS.
+Make the transition to the next question feel instant after a correct answer, while still giving enough time to read feedback after a wrong answer.
 
-## Root cause
+## Current behavior
 
-The drill currently disables the answer input during the short feedback pause. Mobile browsers dismiss the soft keyboard when a focused input becomes disabled. Tapping the Submit button can also steal focus from the input, which causes the same keyboard flicker.
+After submitting, the drill waits before showing the next question:
+- Correct answer: 350 ms pause
+- Wrong answer: 900 ms pause (so the user can see the revealed correct answer)
 
 ## Plan
 
-1. **Keep the input focusable during feedback**
-   - Change the answer input from `disabled` to `readOnly` while feedback is showing.
-   - Keep the same green/red feedback styling so users still see correct/wrong state.
+1. **Shorten the correct-answer delay** from 350 ms to 120 ms so the next question appears almost immediately when you're on a streak.
+2. **Shorten the wrong-answer delay** from 900 ms to 650 ms — still long enough to read the revealed correct answer, but noticeably snappier.
+3. **Keep input focused through the transition** so the keyboard does not flicker on mobile (already in place; verifying it still holds with the shorter timing).
 
-2. **Stop Submit from stealing focus**
-   - Prevent the Submit button from taking focus on touch/mouse press.
-   - Let the form submit normally, but keep focus on the answer field.
-
-3. **Guard against accidental edits during feedback**
-   - Ignore input changes while feedback is visible.
-   - Keep the Submit button disabled during feedback as it is now.
-
-4. **Keep autofocus only as a fallback**
-   - Leave the focus call after question change for desktop/fallback behavior.
-   - The main mobile fix will be that the input never loses focus in the first place.
+No other behavior changes — combo, hints, race-the-bot, and stats logic stay the same.
 
 ## Expected result
 
-After answering a question, the keyboard stays open while the next question appears, instead of collapsing and popping back up.
+Snappier feel on every answer, with wrong answers still readable before moving on.
