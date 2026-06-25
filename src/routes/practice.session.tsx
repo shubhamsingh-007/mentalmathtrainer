@@ -333,8 +333,9 @@ function Session() {
               spellCheck={false}
               enterKeyHint="go"
               value={input}
-              disabled={feedback !== null}
+              readOnly={feedback !== null}
               onChange={(e) => {
+                if (feedback !== null) return;
                 const v = e.target.value;
                 if (v === "" || /^-?\d{0,8}$/.test(v)) setInput(v);
               }}
@@ -372,6 +373,14 @@ function Session() {
             <button
               type="submit"
               disabled={feedback !== null || input === "" || input === "-"}
+              onMouseDown={(e) => e.preventDefault()}
+              onTouchEnd={(e) => {
+                // Prevent the button from stealing focus from the input on mobile,
+                // which would dismiss the soft keyboard between questions.
+                e.preventDefault();
+                if (feedback === null && input !== "" && input !== "-") submit();
+                inputRef.current?.focus();
+              }}
               className="mt-3 block h-12 w-full rounded-xl bg-primary px-4 text-sm font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
             >
               Submit
