@@ -304,7 +304,7 @@ function Session() {
               </p>
             ) : (
               <p className="mt-2 text-center text-xs text-muted-foreground">
-                Type the answer · Enter to submit
+                Tap Submit or press Enter
               </p>
             )}
             {showHint && hintText && !feedback ? (
@@ -319,9 +319,14 @@ function Session() {
                 <span className="align-middle leading-relaxed">{hintText}</span>
               </div>
             ) : null}
-            <button type="submit" className="sr-only" aria-hidden>
+            <button
+              type="submit"
+              disabled={feedback !== null || input === "" || input === "-"}
+              className="mt-3 block h-12 w-full rounded-xl bg-primary px-4 text-sm font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+            >
               Submit
             </button>
+
           </form>
 
           {/* Race-the-bot pacer */}
