@@ -1,0 +1,12 @@
+# Mind Math
+
+> A local-only mental math trainer for adults — adaptive drills, hints, streaks, and a race-the-bot pacer. No account, nothing leaves the browser.
+
+Mind Math helps adults rebuild fluency with numbers through short, focused drills. It covers addition/subtraction, multiplication/division, squares/roots/powers, and percentages across three difficulty tiers. An adaptive engine surfaces the patterns you miss most, contextual hints teach mental math shortcuts, and progress charts track accuracy and speed over time. All progress is stored in the browser's local storage — there is no signup and no server-side data.
+
+## Pages
+
+- [Home](/): Overview of the trainer and practice modes.
+- [Practice](/practice): Configure a drill — operation, difficulty, length, and timer.
+- [Stats](/stats): Streaks, accuracy trends, and personal bests.
+- [Techniques](/how-it-works): A library of mental math shortcuts and tricks.

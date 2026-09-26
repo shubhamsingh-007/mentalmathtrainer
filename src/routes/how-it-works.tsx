@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 
 export const Route = createFileRoute("/how-it-works")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Techniques — Mind Math" },
@@ -14,6 +15,26 @@ export const Route = createFileRoute("/how-it-works")({
       {
         property: "og:description",
         content: "Practical shortcuts for fast mental arithmetic.",
+      },
+      { property: "og:url", content: "https://mentalmathtrainer.lovable.app/how-it-works" },
+    ],
+    links: [{ rel: "canonical", href: "https://mentalmathtrainer.lovable.app/how-it-works" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          name: "Mental Math Techniques",
+          description:
+            "A short library of mental math shortcuts: left-to-right addition, round-and-adjust subtraction, the ×11 trick, doubling and halving, percentage swap, squaring numbers ending in 5, estimating square roots, and difference of squares.",
+          step: TIPS.map((t, i) => ({
+            "@type": "HowToStep",
+            position: i + 1,
+            name: t.title,
+            text: t.body,
+          })),
+        }),
       },
     ],
   }),

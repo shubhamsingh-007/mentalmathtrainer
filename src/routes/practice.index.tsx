@@ -4,13 +4,16 @@ import { AppHeader } from "@/components/AppHeader";
 import { DIFFICULTIES, OPERATIONS, type Difficulty, type Operation } from "@/lib/math";
 
 export const Route = createFileRoute("/practice/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Practice — Mind Math" },
       { name: "description", content: "Pick an operation, difficulty, and session length, then start the drill." },
       { property: "og:title", content: "Practice — Mind Math" },
       { property: "og:description", content: "Configure a focused mental math drill." },
+      { property: "og:url", content: "https://mentalmathtrainer.lovable.app/practice" },
     ],
+    links: [{ rel: "canonical", href: "https://mentalmathtrainer.lovable.app/practice" }],
   }),
   component: Practice,
 });

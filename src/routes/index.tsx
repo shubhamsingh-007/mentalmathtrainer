@@ -5,6 +5,7 @@ import { OPERATIONS } from "@/lib/math";
 import { loadProgress } from "@/lib/progress";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Mind Math — Mental Math Trainer" },
@@ -18,7 +19,9 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Quick daily mental math drills for adults. Local-only progress, no signup.",
       },
+      { property: "og:url", content: "https://mentalmathtrainer.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://mentalmathtrainer.lovable.app/" }],
   }),
   component: Index,
 });

@@ -23,11 +23,23 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/practice/session")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Drill — Mind Math" },
-      { name: "description", content: "Active mental math drill session." },
+      {
+        name: "description",
+        content:
+          "Your active mental math drill: answer questions against the clock, build combos, and race the bot to the finish.",
+      },
+      { property: "og:title", content: "Drill — Mind Math" },
+      {
+        property: "og:description",
+        content: "Answer fast, build combos, and race the bot in an active Mind Math drill.",
+      },
+      { property: "og:url", content: "https://mentalmathtrainer.lovable.app/practice/session" },
     ],
+    links: [{ rel: "canonical", href: "https://mentalmathtrainer.lovable.app/practice/session" }],
   }),
   validateSearch: searchSchema,
   component: Session,
@@ -194,6 +206,7 @@ function Session() {
     <div className="min-h-screen min-h-[100dvh] flex flex-col">
       <AppHeader />
       <main className="flex flex-1 flex-col">
+        <h1 className="sr-only">Mental Math Drill — Active Session</h1>
         {/* HUD — sticky so race bars stay visible above the mobile keyboard */}
         <div className="sticky top-0 z-20 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
           <div className="mx-auto w-full max-w-2xl px-4 py-2 sm:px-6 sm:py-3">

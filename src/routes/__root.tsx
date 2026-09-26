@@ -73,6 +73,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -80,6 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Mind Math — Mental Math Trainer" },
       { name: "description", content: "Short, focused mental math drills for all. No-Fuss Local-only, no signup." },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Mind Math" },
       { name: "twitter:card", content: "summary" },
       { property: "og:title", content: "Mind Math — Mental Math Trainer" },
       { name: "twitter:title", content: "Mind Math — Mental Math Trainer" },
@@ -92,6 +94,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: appCss,
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Mind Math",
+          url: "https://mentalmathtrainer.lovable.app",
+          description:
+            "A local-only mental math trainer for adults: adaptive drills, hints, streaks, and a race-the-bot pacer. No account required.",
+        }),
       },
     ],
   }),
