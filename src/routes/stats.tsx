@@ -6,13 +6,16 @@ import { OPERATIONS, type Operation } from "@/lib/math";
 import { loadProgress, resetProgress } from "@/lib/progress";
 
 export const Route = createFileRoute("/stats")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Stats — Mind Math" },
       { name: "description", content: "Streaks, totals, accuracy, and personal bests for your mental math practice." },
       { property: "og:title", content: "Stats — Mind Math" },
       { property: "og:description", content: "Track your mental math progress." },
+      { property: "og:url", content: "https://mentalmathtrainer.lovable.app/stats" },
     ],
+    links: [{ rel: "canonical", href: "https://mentalmathtrainer.lovable.app/stats" }],
   }),
   component: Stats,
 });

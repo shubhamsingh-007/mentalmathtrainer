@@ -5,11 +5,16 @@ import { OPERATIONS } from "@/lib/math";
 import { getLastResult, type SessionResult } from "@/lib/progress";
 
 export const Route = createFileRoute("/results")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Results — Mind Math" },
       { name: "description", content: "Drill session summary: accuracy, speed, and missed questions." },
+      { property: "og:title", content: "Results — Mind Math" },
+      { property: "og:description", content: "Your drill summary: accuracy, speed, and questions to review." },
+      { property: "og:url", content: "https://mentalmathtrainer.lovable.app/results" },
     ],
+    links: [{ rel: "canonical", href: "https://mentalmathtrainer.lovable.app/results" }],
   }),
   component: Results,
 });
